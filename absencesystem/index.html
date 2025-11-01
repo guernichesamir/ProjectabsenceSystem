@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Attendance System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  
+  <nav class="navbar">
+    <a href="#">Home</a>
+    <a href="#">Attendance List</a>
+    <a href="#">Add Student</a>
+    <a href="#">Reports</a>
+    <a href="#">Logout</a>
+  </nav>
+
+  
+  <section class="attendance">
+    <h2>Student Attendance</h2>
+    <table id="attendanceTable">
+      <thead>
+        <tr>
+          <th>Last Name</th>
+          <th>First Name</th>
+          <th colspan="6">Sessions (S1 → S6)</th>
+          <th colspan="6">Participation (P1 → P6)</th>
+          <th>Absences</th>
+          <th>Participation</th>
+          <th>Message</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Ahmed</td>
+          <td>Sara</td>
+          <td><input type="checkbox"></td><td><input type="checkbox"></td>
+          <td><input type="checkbox"></td><td><input type="checkbox"></td>
+          <td><input type="checkbox"></td><td><input type="checkbox"></td>
+          <td><input type="checkbox"></td><td><input type="checkbox"></td>
+          <td><input type="checkbox"></td><td><input type="checkbox"></td>
+          <td><input type="checkbox"></td><td><input type="checkbox"></td>
+          <td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td>Yacine</td>
+          <td>Ali</td>
+          <td><input type="checkbox"></td><td><input type="checkbox"></td>
+          <td><input type="checkbox"></td><td><input type="checkbox"></td>
+          <td><input type="checkbox"></td><td><input type="checkbox"></td>
+          <td><input type="checkbox"></td><td><input type="checkbox"></td>
+          <td><input type="checkbox"></td><td><input type="checkbox"></td>
+          <td><input type="checkbox"></td><td><input type="checkbox"></td>
+          <td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td>Houcine</td>
+          <td>Rania</td>
+          <td><input type="checkbox"></td><td><input type="checkbox"></td>
+          <td><input type="checkbox"></td><td><input type="checkbox"></td>
+          <td><input type="checkbox"></td><td><input type="checkbox"></td>
+          <td><input type="checkbox"></td><td><input type="checkbox"></td>
+          <td><input type="checkbox"></td><td><input type="checkbox"></td>
+          <td><input type="checkbox"></td><td><input type="checkbox"></td>
+          <td></td><td></td><td></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  
+  <section class="form-section">
+    <h2>Add Student</h2>
+    <form id="studentForm">
+      <label for="studentId">Student ID</label>
+      <input type="text" id="studentId" name="studentId">
+
+      <label for="lastname">Last Name</label>
+      <input type="text" id="lastname" name="lastname">
+
+      <label for="firstname">First Name</label>
+      <input type="text" id="firstname" name="firstname">
+
+      <label for="email">Email</label>
+      <input type="text" id="email" name="email">
+
+      <button type="submit">Submit</button>
+    </form>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>
