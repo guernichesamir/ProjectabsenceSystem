@@ -5,7 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Attendance System</title>
   <link rel="stylesheet" href="style.css">
+  <script src="script.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 </head>
+
 <body>
   
   <nav class="navbar">
@@ -15,15 +20,35 @@
     <a href="#">Reports</a>
     <a href="#">Logout</a>
   </nav>
-
+<div class="table-controls">
+  <input type="text" id="searchName" placeholder="Search by Name">
+  <button id="sortAbsences">Sort by Absences (Ascending)</button>
+  <button id="sortParticipation">Sort by Participation (Descending)</button>
+</div>
+<div class="report-container">
+  <section class="report">
+    <h2>Attendance Report</h2>
+    <button id="showReportBtn">Show Report</button>
+    <canvas id="reportChart" width="300" height="150"></canvas>
+  </section>
   
   <section class="attendance">
     <h2>Student Attendance</h2>
+     
+    <div class="table-buttons">
+  <button id="highlightExcellent">Highlight Excellent Students</button>
+  <button id="resetColors">Reset Colors</button>
+</div>
+
+
     <table id="attendanceTable">
       <thead>
         <tr>
+          <th>Student ID</th>
+        
           <th>Last Name</th>
           <th>First Name</th>
+         <th>Email</th>
           <th colspan="6">Sessions (S1 → S6)</th>
           <th colspan="6">Participation (P1 → P6)</th>
           <th>Absences</th>
@@ -33,30 +58,48 @@
       </thead>
       <tbody>
         <tr>
+          <td>31780801</td>
           <td>Ahmed</td>
           <td>Sara</td>
-          <td><input type="checkbox"></td><td><input type="checkbox"></td>
-          <td><input type="checkbox"></td><td><input type="checkbox"></td>
-          <td><input type="checkbox"></td><td><input type="checkbox"></td>
-          <td><input type="checkbox"></td><td><input type="checkbox"></td>
-          <td><input type="checkbox"></td><td><input type="checkbox"></td>
-          <td><input type="checkbox"></td><td><input type="checkbox"></td>
+          <td>guernichesamir4@gmail.com</td>
+          <td><input type="checkbox"></td><td>
+            <input type="checkbox"></td>
+          <td><input type="checkbox"></td><td>
+            <input type="checkbox"></td>
+          <td><input type="checkbox"></td><td>
+            <input type="checkbox"></td>
+          <td><input type="checkbox"></td><td>
+            <input type="checkbox"></td>
+          <td><input type="checkbox"></td><td>
+            <input type="checkbox"></td>
+          <td><input type="checkbox"></td><td>
+            <input type="checkbox"></td>
           <td></td><td></td><td></td>
         </tr>
         <tr>
+          <td>31780801</td>
           <td>Yacine</td>
           <td>Ali</td>
-          <td><input type="checkbox"></td><td><input type="checkbox"></td>
-          <td><input type="checkbox"></td><td><input type="checkbox"></td>
-          <td><input type="checkbox"></td><td><input type="checkbox"></td>
-          <td><input type="checkbox"></td><td><input type="checkbox"></td>
-          <td><input type="checkbox"></td><td><input type="checkbox"></td>
-          <td><input type="checkbox"></td><td><input type="checkbox"></td>
+          <td>guernichesamir4@gmail.com</td>
+          <td><input type="checkbox"></td><td>
+            <input type="checkbox"></td>
+          <td><input type="checkbox"></td><td>
+            <input type="checkbox"></td>
+          <td><input type="checkbox"></td><td>
+            <input type="checkbox"></td>
+          <td><input type="checkbox"></td><td>
+            <input type="checkbox"></td>
+          <td><input type="checkbox"></td><td>
+            <input type="checkbox"></td>
+          <td><input type="checkbox"></td><td>
+            <input type="checkbox"></td>
           <td></td><td></td><td></td>
         </tr>
         <tr>
+          <td>31780801</td>
           <td>Houcine</td>
           <td>Rania</td>
+          <td>guernichesamir4@gmail.com</td>
           <td><input type="checkbox"></td><td><input type="checkbox"></td>
           <td><input type="checkbox"></td><td><input type="checkbox"></td>
           <td><input type="checkbox"></td><td><input type="checkbox"></td>
@@ -69,7 +112,15 @@
     </table>
   </section>
 
+  <div id="sortMessage" style="margin-top: 10px; font-weight: bold;"></div>
+ 
+   
+      
+    
   
+
+
+<div class="side-panels">
   <section class="form-section">
     <h2>Add Student</h2>
     <form id="studentForm">
@@ -89,6 +140,101 @@
     </form>
   </section>
 
-  <script src="script.js"></script>
+   
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<style>
+.hover-highlight {
+  outline: 3px solid #999;
+  cursor: pointer;
+}
+</style>
+
+<script>
+$(document).ready(function() {
+ 
+  $("#attendanceTable tbody tr").hover(
+    function() { $(this).addClass("hover-highlight"); },
+    function() { $(this).removeClass("hover-highlight"); }
+  );
+
+ 
+  $("#attendanceTable tbody tr").click(function(event) {
+   
+    if ($(event.target).is('input[type="checkbox"]')) {
+      return; 
+    }
+
+    const lastName = $(this).find("td:eq(1)").text();
+    const firstName = $(this).find("td:eq(2)").text();
+    const absences = $(this).find("td:eq(16)").text(); 
+    alert(`Student: ${firstName} ${lastName}\nAbsences: ${absences}`);
+  });
+});
+
+$(document).ready(function() {
+
+  $("#highlightExcellent").click(function() {
+    $("#attendanceTable tbody tr").each(function() {
+      const absences = parseInt($(this).find("td:eq(16)").text()) || 0;
+      if (absences < 3) {
+       
+        $(this).fadeOut(200, function() {
+          $(this).css("background-color", "#6A0DAD"); 
+          $(this).fadeIn(400);
+        });
+      }
+    });
+  });
+
+  
+  $("#resetColors").click(function() {
+    $("#attendanceTable tbody tr").each(function() {
+      $(this).css("background-color", ""); 
+    });
+  });
+});
+
+$(document).ready(function() {
+  const tbody = $("#attendanceTable tbody");
+
+
+  $("#searchName").on("keyup", function() {
+    const searchVal = $(this).val().toLowerCase();
+    tbody.find("tr").filter(function() {
+      const lastName = $(this).find("td:eq(1)").text().toLowerCase();
+      const firstName = $(this).find("td:eq(2)").text().toLowerCase();
+      $(this).toggle(lastName.includes(searchVal) || firstName.includes(searchVal));
+    });
+  });
+
+  $("#sortAbsences").click(function() {
+    const rows = tbody.find("tr").get();
+    rows.sort(function(a, b) {
+      const aVal = parseInt($(a).find("td:eq(16)").text()) || 0; 
+      const bVal = parseInt($(b).find("td:eq(16)").text()) || 0;
+      return aVal - bVal;
+    });
+    $.each(rows, function(index, row) { tbody.append(row); });
+    $("#sortMessage").text("Currently sorted by absences (ascending)");
+  });
+
+ 
+  $("#sortParticipation").click(function() {
+    const rows = tbody.find("tr").get();
+    rows.sort(function(a, b) {
+      const aVal = parseInt($(a).find("td:eq(17)").text()) || 0; 
+      const bVal = parseInt($(b).find("td:eq(17)").text()) || 0;
+      return bVal - aVal; 
+    });
+    $.each(rows, function(index, row) { tbody.append(row); });
+    $("#sortMessage").text("Currently sorted by participation (descending)");
+  });
+});
+</script>
+
+  
 </body>
 </html>
+
