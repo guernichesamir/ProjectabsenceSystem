@@ -1,0 +1,186 @@
+/* ----------- GLOBAL ------------ */
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: rgb(170, 204, 253);
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+
+/* NAVBAR */
+.navbar {
+  background:rgba(104, 136, 182, 0.849);
+  padding: 15px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+.navbar a {
+  margin: 0 10px;
+  padding: 8px 16px;
+  text-decoration: none;
+  color: #333;
+  border-radius: 8px;
+  transition: 0.3s;
+}
+.navbar a:hover {
+  background: #10b981;
+  color: white;
+}
+
+/* PAGE LAYOUT */
+.container {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  padding: 25px;
+}
+
+.attendance {
+  flex: 0 0 65%;
+}
+
+.side-panels {
+  flex: 0 0 30%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ----------- TABLE ----------- */
+.table-controls {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+#searchName {
+  padding: 7px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 13px;
+  flex: 1;
+  max-width: 200px;
+}
+
+.table-controls button,
+.table-buttons button {
+  font-size: 12px;
+  padding: 5px 8px;
+  border-radius: 6px;
+  border: none;
+  background: rgba(74, 113, 168, 0.849);
+  color: white;
+  cursor: pointer;
+}
+.table-controls button:hover,
+.table-buttons button:hover {
+  background: #059669;
+}
+
+.table-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+table {
+  width: 100%;
+  background: white;
+  border-collapse: collapse;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+th, td {
+  padding: 8px;
+  text-align: center;
+}
+th {
+  background: rgba(104, 136, 182, 0.849);
+  color: white;
+}
+
+tr:hover {
+  background: #f0f9f5;
+}
+
+.hover-highlight {
+  outline: 2px solid #10b981;
+}
+
+/* ---------- FORM + REPORT ----------- */
+.form-section,
+.report {
+  background: rgba(195, 217, 247, 0.849);
+  padding: 18px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.form-section h2,
+.report h2 {
+  text-align: center;
+  color:rgba(45, 45, 46, 0.849);
+}
+
+label {
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+input {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  margin-top: 4px;
+}
+
+.submit-btn {
+  width: 100%;
+  margin-top: 15px;
+  background: rgba(144, 180, 230, 0.849);
+  padding: 10px;
+  color: white;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+.submit-btn:hover {
+  background: #059669;
+}
+
+#errorMsg { color: red; }
+
+/* Chart */
+#reportChart {
+  width: 100%;
+  height: 220px;
+}
+#showReportBtn {
+    background: rgb(180, 210, 255); /* bleu très clair */
+    color: #0f1b40; /* bleu foncé lisible */
+    border: none;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+
+/* hover effect */
+#showReportBtn:hover {
+    background: rgb(160, 200, 255);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.20);
+}
+
+/* active (quand on clique) */
+#showReportBtn:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.20);
+}
