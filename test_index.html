@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Index</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Test Index - Formulaire Principal</h1>
+
+    <!-- FORMULAIRE SIMPLIFIÉ -->
+    <form id="studentForm">
+        <div>
+            <label>Student ID:</label>
+            <input type="text" id="matricule" name="matricule" value="108">
+        </div>
+        <div>
+            <label>Last Name:</label>
+            <input type="text" id="lastname" name="lastname" value="Dupont">
+        </div>
+        <div>
+            <label>First Name:</label>
+            <input type="text" id="firstname" name="firstname" value="Jean">
+        </div>
+        <div>
+            <label>Group:</label>
+            <input type="text" id="group_id" name="group_id" value="G1">
+        </div>
+        <button type="submit">Add Student</button>
+    </form>
+
+    <script>
+    $("#studentForm").submit(function(e) {
+        e.preventDefault();
+        console.log("🔄 Form submitted from TEST INDEX");
+
+        const matricule = $("#matricule").val();
+        const last = $("#lastname").val();
+        const first = $("#firstname").val();
+        const group_id = $("#group_id").val();
+
+        const data = {
+            matricule: matricule,
+            fullname: first + " " + last,
+            group_id: group_id
+        };
+
+        console.log("📨 Sending:", data);
+
+        $.post("add_student.php", data, function(response) {
+            console.log("📩 Response:", response);
+            alert(response.status + ": " + response.msg);
+        }, "json");
+    });
+    </script>
+</body>
+</html>

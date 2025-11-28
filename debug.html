@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <h1>Test Debug</h1>
+    
+    <form id="testForm">
+        <input type="text" id="matricule" placeholder="Matricule" value="107">
+        <input type="text" id="lastname" placeholder="Last Name" value="Test">
+        <input type="text" id="firstname" placeholder="First Name" value="Debug">
+        <input type="text" id="group_id" placeholder="Group" value="G1">
+        <button type="submit">Test Add</button>
+    </form>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    $("#testForm").submit(function(e) {
+        e.preventDefault();
+        
+        const data = {
+            matricule: $("#matricule").val(),
+            fullname: $("#firstname").val() + " " + $("#lastname").val(),
+            group_id: $("#group_id").val()
+        };
+        
+        console.log("Sending:", data);
+        
+        $.post("add_student.php", data, function(response) {
+            console.log("Response:", response);
+            alert(response.status + ": " + response.msg);
+        }, "json");
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attendance System</title>
+
+<!-- CSS -->
+<style>
+/* ----------- GLOBAL ------------ */
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: rgb(170, 204, 253);
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+
+/* NAVBAR */
+.navbar {
+  background:rgba(104, 136, 182, 0.849);
+  padding: 15px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+.navbar a {
+  margin: 0 10px;
+  padding: 8px 16px;
+  text-decoration: none;
+  color: #333;
+  border-radius: 8px;
+  transition: 0.3s;
+}
+.navbar a:hover {
+  background: #10b981;
+  color: white;
+}
+
+/* PAGE LAYOUT */
+.container {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  padding: 25px;
+}
+
+.attendance {
+  flex: 0 0 65%;
+}
+
+.side-panels {
+  flex: 0 0 30%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ----------- TABLE ----------- */
+.table-controls {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+#searchName {
+  padding: 7px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 13px;
+  flex: 1;
+  max-width: 200px;
+}
+
+.table-controls button,
+.table-buttons button {
+  font-size: 12px;
+  padding: 5px 8px;
+  border-radius: 6px;
+  border: none;
+  background: rgba(74, 113, 168, 0.849);
+  color: white;
+  cursor: pointer;
+}
+.table-controls button:hover,
+.table-buttons button:hover {
+  background: #059669;
+}
+
+.table-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+table {
+  width: 100%;
+  background: white;
+  border-collapse: collapse;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+th, td {
+  padding: 8px;
+  text-align: center;
+}
+th {
+  background: rgba(104, 136, 182, 0.849);
+  color: white;
+}
+
+tr:hover {
+  background: #f0f9f5;
+}
+
+.hover-highlight {
+  outline: 2px solid #10b981;
+}
+
+/* ---------- FORM + REPORT ----------- */
+.form-section,
+.report {
+  background: rgba(195, 217, 247, 0.849);
+  padding: 18px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.form-section h2,
+.report h2 {
+  text-align: center;
+  color:rgba(45, 45, 46, 0.849);
+}
+
+label {
+  font-weight: 600;
+  margin-top: 10px;
+  display: block;
+}
+
+input {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  margin-top: 4px;
+  box-sizing: border-box;
+}
+
+.submit-btn {
+  width: 100%;
+  margin-top: 15px;
+  background: rgba(144, 180, 230, 0.849);
+  padding: 10px;
+  color: white;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+.submit-btn:hover {
+  background: #059669;
+}
+
+.error {
+  color: red;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+/* Chart */
+#reportChart {
+  width: 100%;
+  height: 220px;
+}
+#showReportBtn {
+    background: rgb(180, 210, 255);
+    color: #0f1b40;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+
+#showReportBtn:hover {
+    background: rgb(160, 200, 255);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.20);
+}
+
+#showReportBtn:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.20);
+}
+</style>
+
+<!-- jQuery & ChartJS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<nav class="navbar">
+  <a href="#">Home</a>
+  <a href="#">Attendance List</a>
+  <a href="#">Add Student</a>
+  <a href="#">Reports</a>
+  <a href="#">Logout</a>
+</nav>
+
+<div class="container">
+
+  <!-- TABLE LEFT SIDE -->
+  <div class="attendance">
+
+    <div class="table-controls">
+      <input type="text" id="searchName" placeholder="Search by Name">
+      <button id="sortAbsences">Sort Abs (Asc)</button>
+      <button id="sortParticipation">Sort Part (Desc)</button>
+    </div>
+
+    <div class="table-buttons">
+      <button id="highlightExcellent">Highlight Excellent</button>
+      <button id="resetColors">Reset</button>
+      <button id="SaveattendanceBtn">Save Attendance</button>
+    </div>
+
+    <table id="attendanceTable">
+      <thead>
+        <tr>
+          <th>ID</th><th>Last Name</th><th>First Name</th><th>Email</th>
+          <th colspan="6">Sessions</th>
+          <th colspan="6">Participation</th>
+          <th>Absences</th><th>Participation</th><th>Message</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <!-- Students will be loaded here -->
+      </tbody>
+      
+    </table>
+
+  </div>
+
+  <!-- RIGHT SIDE PANELS -->
+  <div class="side-panels">
+
+    <!-- ADD STUDENT -->
+    <div class="form-section">
+      <h2>Add Student</h2>
+      <form id="studentForm">
+        <!-- ⚠️ CHANGÉ: studentId → matricule -->
+        <label for="matricule">Student ID</label>
+        <input type="text" id="matricule" name="matricule">
+
+        <label for="lastname">Last Name</label>
+        <input type="text" id="lastname" name="lastname">
+
+        <label for="firstname">First Name</label>
+        <input type="text" id="firstname" name="firstname">
+
+        <label for="email">Email</label>
+        <input type="text" id="email" name="email">
+
+        <!-- ⚠️ NOUVEAU CHAMP -->
+        <label for="group_id">Group</label>
+        <input type="text" id="group_id" name="group_id" placeholder="ex: G1, G2, G3">
+
+        <button type="submit" class="submit-btn">Submit</button>
+      </form>
+    </div>
+
+    <!-- REPORT -->
+    <div class="report">
+      <h2>Attendance Report</h2>
+      <button id="showReportBtn">Show Report</button>
+      <canvas id="reportChart"></canvas>
+    </div>
+
+  </div>
+</div>
+
+<!-- JS -->
+<script>
+$(document).ready(function () {
+
+  const table = $("#attendanceTable tbody");
+
+  /* ---------------- LOAD STUDENTS FROM DATABASE ---------------- */
+  function loadStudents() {
+    console.log("🔍 Loading students from database...");
+    
+    $.getJSON("list_students.php", function (response) {
+      console.log("📊 Database response:", response);
+      
+      if (response.status === "success") {
+        table.empty();
+        
+        if (response.data.length === 0) {
+          table.append('<tr><td colspan="19" style="text-align: center; padding: 20px;">No students found. Add students using the form.</td></tr>');
+          return;
+        }
+        
+        response.data.forEach(student => {
+          let nameParts = student.fullname.split(' ');
+          let firstName = nameParts[0] || '';
+          let lastName = nameParts.slice(1).join(' ') || student.fullname;
+          
+          let row = `<tr>
+            <td>${student.matricule}</td>
+            <td>${lastName}</td>
+            <td>${firstName}</td>
+            <td>${student.email || 'N/A'}</td>
+            ${'<td><input type="checkbox"></td>'.repeat(12)}
+            <td>0</td><td>0</td><td></td>
+          </tr>`;
+          table.append(row);
+        });
+        
+        updateAttendance();
+        console.log("✅ Students loaded successfully!");
+        
+      } else {
+        console.error("Error loading students:", response.msg);
+        alert("Error: " + response.msg);
+      }
+    }).fail(function(jqxhr, textStatus, error) {
+      console.error("❌ Error loading students:", textStatus, error);
+      table.html('<tr><td colspan="19" style="text-align: center; padding: 20px; color: red;">Error loading students from database.</td></tr>');
+    });
+  }
+
+  // Charger les étudiants au démarrage
+  loadStudents();
+
+  /* ---------------- HOVER EFFECT ---------------- */
+  table.on("mouseenter", "tr", function () { $(this).addClass("hover-highlight"); });
+  table.on("mouseleave", "tr", function () { $(this).removeClass("hover-highlight"); });
+
+  /* ---------------- UPDATE ATTENDANCE ---------------- */
+  function updateAttendance() {
+    table.find("tr").each(function () {
+      const row = $(this);
+      const sessionChecks = row.find("td").slice(4, 10).find("input[type='checkbox']");
+      const partChecks = row.find("td").slice(10, 16).find("input[type='checkbox']");
+      const absCell = row.find("td:eq(16)");
+      const partCell = row.find("td:eq(17)");
+      const msgCell = row.find("td:eq(18)");
+
+      const absences = sessionChecks.filter(":not(:checked)").length;
+      const participation = partChecks.filter(":checked").length;
+
+      absCell.text(absences);
+      partCell.text(participation);
+
+      // Color rules
+      if (absences < 3) row.css("background", "rgba(164, 252, 164, 1)");
+      else if (absences <= 4) row.css("background", "rgba(246, 252, 164, 1)");
+      else row.css("background", "rgba(252, 164, 164, 1)");
+
+      // Messages
+      if (absences < 3 && participation >= 4)
+        msgCell.text("Good attendance – Excellent participation");
+      else if (absences < 5 && participation < 4)
+        msgCell.text("Attendance low – You need to participate more");
+      else if (absences >= 5)
+        msgCell.text("Excluded");
+      else msgCell.text("");
+    });
+  }
+
+  table.on("change", "input[type='checkbox']", updateAttendance);
+
+  /* ---------------- ADD STUDENT ---------------- */
+  $("#studentForm").submit(function (e) {
+    e.preventDefault();
+    console.log("🔄 Form submitted from INDEX1");
+
+    const matricule = $("#matricule").val().trim();
+    const last = $("#lastname").val().trim();
+    const first = $("#firstname").val().trim();
+    const email = $("#email").val().trim();
+    const group_id = $("#group_id").val().trim();
+
+    console.log("📨 Form data:", { matricule, last, first, email, group_id });
+
+    let valid = true;
+    $(".error").remove();
+
+    if (!/^\d+$/.test(matricule)) { 
+      $("#matricule").after('<div class="error">ID must be numeric</div>'); 
+      valid = false; 
+    }
+    if (!/^[a-zA-Z]+$/.test(last)) { 
+      $("#lastname").after('<div class="error">Letters only</div>'); 
+      valid = false; 
+    }
+    if (!/^[a-zA-Z]+$/.test(first)) { 
+      $("#firstname").after('<div class="error">Letters only</div>'); 
+      valid = false; 
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { 
+      $("#email").after('<div class="error">Invalid email</div>'); 
+      valid = false; 
+    }
+    if (!group_id) { 
+      $("#group_id").after('<div class="error">Group is required</div>'); 
+      valid = false; 
+    }
+
+    if (!valid) {
+      console.log("❌ Form validation failed");
+      return;
+    }
+
+    // Préparer les données pour PHP
+    const formData = {
+      matricule: matricule,
+      fullname: first + " " + last,
+      group_id: group_id
+    };
+
+    console.log("🚀 Sending to server:", formData);
+
+    // AJAX POST vers add_student.php
+    $.post("add_student.php", formData, function (response) {
+      console.log("📩 Server response:", response);
+      
+      if (response.status === "success") {
+        alert("✅ " + response.msg);
+        $("#studentForm")[0].reset();
+        console.log("🔄 Reloading students...");
+        loadStudents(); // Recharge la table
+      } else {
+        alert("❌ " + response.msg);
+      }
+    }, "json").fail(function(xhr, status, error) {
+      console.error("❌ AJAX Error:", status, error);
+      alert("❌ Server connection error");
+    });
+  });
+
+  /* ---------------- SEARCH ---------------- */
+  $("#searchName").on("keyup", function () {
+    const value = $(this).val().toLowerCase();
+    table.find("tr").each(function () {
+      const last = $(this).find("td:eq(1)").text().toLowerCase();
+      const first = $(this).find("td:eq(2)").text().toLowerCase();
+      $(this).toggle(last.includes(value) || first.includes(value));
+    });
+  });
+
+  /* ---------------- SORT & HIGHLIGHT ---------------- */
+  $("#sortAbsences").click(function () {
+    const rows = table.find("tr").get();
+    rows.sort((a, b) => (parseInt($(a).find("td:eq(16)").text()) || 0) - (parseInt($(b).find("td:eq(16)").text()) || 0));
+    $.each(rows, (i, row) => table.append(row));
+  });
+
+  $("#sortParticipation").click(function () {
+    const rows = table.find("tr").get();
+    rows.sort((a, b) => (parseInt($(b).find("td:eq(17)").text()) || 0) - (parseInt($(a).find("td:eq(17)").text()) || 0));
+    $.each(rows, (i, row) => table.append(row));
+  });
+
+  $("#highlightExcellent").click(function () {
+    table.find("tr").each(function () {
+      const abs = parseInt($(this).find("td:eq(16)").text()) || 0;
+      if (abs < 3) $(this).css("background", "#dfc3f0e3");
+    });
+  });
+
+  $("#resetColors").click(function () {
+    table.find("tr").css("background", "");
+    updateAttendance();
+  });
+
+  /* ---------------- REPORT ---------------- */
+  let reportChart = null;
+  $("#showReportBtn").click(function () {
+    const rows = table.find("tr").filter(function() {
+      return $(this).find("td").length > 1;
+    });
+    
+    if (rows.length === 0) {
+      alert("No students data available.");
+      return;
+    }
+    
+    let total = rows.length, present = 0, participated = 0;
+
+    rows.each(function () {
+      const sess = $(this).find("td").slice(4, 10).find("input[type='checkbox']");
+      const part = $(this).find("td").slice(10, 16).find("input[type='checkbox']");
+      if (sess.filter(":checked").length > 0) present++;
+      if (part.filter(":checked").length > 0) participated++;
+    });
+
+    function pickColor(rate) { 
+      if (rate >= 0.7) return "#4CAF50"; 
+      else if (rate >= 0.4) return "#FFEB3B"; 
+      return "#F44336"; 
+    }
+
+    if (reportChart) reportChart.destroy();
+
+    const ctx = document.getElementById('reportChart').getContext('2d');
+    reportChart = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: ["Total Students", "Present", "Participated"],
+        datasets: [{ 
+          label: "Attendance", 
+          data: [total, present, participated], 
+          backgroundColor: ["#2196F3", pickColor(present / total), pickColor(participated / total)] 
+        }]
+      },
+      options: { 
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  });
+
+  /* ---------------- SAVE ATTENDANCE ---------------- */
+  $("#SaveattendanceBtn").click(function () {
+    let attendanceData = {};
+
+    $("#attendanceTable tbody tr").each(function () {
+      if ($(this).find("td").length <= 1) return;
+      
+      const studentId = $(this).find("td:eq(0)").text();
+      const sessionChecks = $(this).find("td").slice(4, 10).find("input[type='checkbox']");
+      const presentCount = sessionChecks.filter(":checked").length;
+      const status = (presentCount >= 3) ? "present" : "absent";
+      
+      attendanceData[studentId] = status;
+    });
+
+    if (Object.keys(attendanceData).length === 0) {
+      alert("No students data to save.");
+      return;
+    }
+
+    console.log("📊 Attendance data:", attendanceData);
+    alert("✅ Attendance ready for MySQL!\n\nData: " + JSON.stringify(attendanceData, null, 2));
+  });
+
+});
+</script>
+
+</body>
+</html>
